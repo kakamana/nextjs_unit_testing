@@ -11,8 +11,8 @@
     "test:watch": "jest --watch",
     "security:unit": "jest --testPathPatterns=security-tests/unit",
     "security:sast": "eslint . --ext .ts,.tsx -f json -o artifacts/security/eslint.json",
-    "security:zap": "docker run --rm --network host -v %CD%/artifacts/security:/zap/wrk owasp/zap2docker-stable zap-baseline.py -t http://localhost:3000 -r zap_report.html -J zap_report.json",
-    "security:zap:local": "docker run --rm -v %CD%/artifacts/security:/zap/wrk owasp/zap2docker-stable zap-baseline.py -t http://host.docker.internal:3000 -r zap_report.html -J zap_report.json",
+    "security:zap": "docker run --rm --network host -v %CD%/artifacts/security:/zap/wrk zaproxy/zap-stable zap-baseline.py -t http://localhost:3000 -r zap_report.html -J zap_report.json",
+    "security:zap:local": "docker run --rm -v %CD%/artifacts/security:/zap/wrk zaproxy/zap-stable zap-baseline.py -t http://host.docker.internal:3000 -r zap_report.html -J zap_report.json",
     "security:report": "node scripts/security-report.js"
   },
   "dependencies": {

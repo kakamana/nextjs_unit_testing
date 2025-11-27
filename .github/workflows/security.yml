@@ -38,7 +38,7 @@ jobs:
         run: npm run security:sast
 
       - name: Run OWASP ZAP baseline
-        run: npm run security:zap
+        run: docker run --rm --network host -v $PWD/artifacts/security:/zap/wrk zaproxy/zap-stable zap-baseline.py -t http://localhost:3000 -r zap_report.html -J zap_report.json
 
       - name: Generate consolidated security report (HTML/PDF)
         run: npm run security:report
