@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "security:unit": "jest --testPathPattern=security-tests/unit",
+    "security:sast": "eslint . --ext .ts,.tsx -f json -o artifacts/security/eslint.json",
+    "security:zap": "docker run --rm --network host -v %CD%/artifacts/security:/zap/wrk owasp/zap2docker-stable zap-baseline.py -t http://localhost:3000 -r zap_report.html -J zap_report.json",
+    "security:report": "node scripts/security-report.js"
   },
   "dependencies": {
     "lucide-react": "^0.541.0",
@@ -33,6 +37,9 @@
     "jest-environment-jsdom": "^30.0.5",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "eslint-plugin-security": "^1.7.1",
+    "puppeteer": "^23.8.1",
+    "wait-on": "^7.2.0"
   }
 }

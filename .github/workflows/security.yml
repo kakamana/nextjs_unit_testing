@@ -1,0 +1,62 @@
+name: Security Assessment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm test -- --coverage
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Start Next.js server
+        run: nohup npm run start &
+
+      - name: Wait for server
+        run: npx wait-on http://localhost:3000
+
+      - name: Run ESLint Security scan (JSON)
+        run: npm run security:sast
+
+      - name: Run OWASP ZAP baseline
+        run: npm run security:zap
+
+      - name: Generate consolidated security report (HTML/PDF)
+        run: npm run security:report
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-artifacts
+          path: artifacts/security
+
+      - name: Fail on high alerts (example)
+        run: |
+          # Simple gate: fail if ZAP report JSON contains High risk alerts
+          if [ -f artifacts/security/zap_report.json ]; then
+            HIGH=$(jq '[..|objects|select(.risk == "High")] | length' artifacts/security/zap_report.json);
+            echo "High alerts: $HIGH";
+            if [ "$HIGH" -gt "0" ]; then
+              echo "Found High risk alerts";
+              exit 1;
+            fi
+          fi
