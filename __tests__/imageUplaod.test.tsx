@@ -92,4 +92,88 @@ describe("ImageUpload", () => {
     ).not.toBeInTheDocument();
     expect(mockHandleChange).toHaveBeenCalledTimes(1);
   });
+
+  it("should handle dragOver event without errors", () => {
+    render(<ImageUpload handleChange={mockHandleChange} />);
+
+    const dropZone = screen.getByTestId("drop-zone");
+
+    // dragOver should not cause any errors
+    expect(() => fireEvent.dragOver(dropZone)).not.toThrow();
+  });
+
+  it("should set dragging state on dragEnter", () => {
+    render(<ImageUpload handleChange={mockHandleChange} />);
+
+    const dropZone = screen.getByTestId("drop-zone");
+
+    fireEvent.dragEnter(dropZone);
+
+    // Check if the dragging state is applied (cyan border)
+    expect(dropZone.className).toContain("border-cyan-500");
+  });
+
+  it("should remove dragging state on dragLeave", () => {
+    render(<ImageUpload handleChange={mockHandleChange} />);
+
+    const dropZone = screen.getByTestId("drop-zone");
+
+    // First trigger dragEnter to set dragging state
+    fireEvent.dragEnter(dropZone);
+    expect(dropZone.className).toContain("border-cyan-500");
+
+    // Then trigger dragLeave to remove dragging state
+    fireEvent.dragLeave(dropZone);
+
+    expect(dropZone.className).not.toContain("border-cyan-500");
+  });
+
+  it("should show error when multiple files are dropped", () => {
+    render(<ImageUpload handleChange={mockHandleChange} />);
+
+    const file1 = new File(["file1 content"], "file1.png", {
+      type: "image/png",
+    });
+    const file2 = new File(["file2 content"], "file2.jpg", {
+      type: "image/jpeg",
+    });
+    const dataTransfer = { files: [file1, file2] };
+    const dropZone = screen.getByTestId("drop-zone");
+
+    fireEvent.drop(dropZone, { dataTransfer });
+
+    expect(
+      screen.getByText(/Only one image can be uploaded./i),
+    ).toBeInTheDocument();
+    expect(mockHandleChange).not.toHaveBeenCalled();
+  });
+
+  it("should clear error when valid file is dropped after error", () => {
+    render(<ImageUpload handleChange={mockHandleChange} />);
+
+    // First drop multiple files to trigger error
+    const file1 = new File(["file1 content"], "file1.png", {
+      type: "image/png",
+    });
+    const file2 = new File(["file2 content"], "file2.jpg", {
+      type: "image/jpeg",
+    });
+    const dropZone = screen.getByTestId("drop-zone");
+
+    fireEvent.drop(dropZone, { dataTransfer: { files: [file1, file2] } });
+    expect(
+      screen.getByText(/Only one image can be uploaded./i),
+    ).toBeInTheDocument();
+
+    // Then drop a single valid file
+    const validFile = new File(["valid content"], "valid.png", {
+      type: "image/png",
+    });
+    fireEvent.drop(dropZone, { dataTransfer: { files: [validFile] } });
+
+    expect(
+      screen.queryByText(/Only one image can be uploaded./i),
+    ).not.toBeInTheDocument();
+    expect(mockHandleChange).toHaveBeenCalledTimes(1);
+  });
 });
