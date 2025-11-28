@@ -82,35 +82,48 @@ export const SocialFields: FC<SocialFieldsProps> = ({ socials, onChange }) => {
 
   return (
     <div>
-      <Label htmlFor="description" label="Social Links" />
+      {/* Heading instead of a form label to avoid orphan/duplicate label issues */}
+      <p className="block text-sm font-medium text-gray-400 mb-2">Social Links</p>
 
       <div className="space-y-3">
-        {socials.map((social, index) => (
-          <div key={social.platform} className="flex items-center gap-3">
-            <social.Icon className="h-6 w-6 text-gray-500" />
-            <div className="w-full">
-              <input
-                type="url"
-                value={social.url}
-                onChange={(e) => handleSocialChange(index, e)}
-                onBlur={(e) => handleBlur(index, e.target.value)}
-                placeholder={`${
-                  social.platform.toLowerCase() === "x"
-                    ? "x.com/username"
-                    : `${social.platform.toLowerCase()}.com/username`
-                }`}
-                className={`w-full bg-gray-700 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 transition-all ${
-                  errors[index]
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-600 focus:ring-cyan-500"
-                }`}
-              />
-              {errors[index] && (
-                <p className="mt-1 text-sm text-red-500">{errors[index]}</p>
-              )}
+        {socials.map((social, index) => {
+          const id = `social-${social.platform.toLowerCase()}`;
+          const labelText =
+            social.platform.toLowerCase() === "x"
+              ? "X (formerly Twitter) URL"
+              : `${social.platform.charAt(0).toUpperCase()}${social.platform.slice(1)} URL`;
+          return (
+            <div key={social.platform} className="flex items-center gap-3">
+              <social.Icon className="h-6 w-6 text-gray-500" aria-hidden="true" />
+              <div className="w-full">
+                {/* Visually hidden label to provide accessible name */}
+                <label htmlFor={id} className="sr-only">
+                  {labelText}
+                </label>
+                <input
+                  id={id}
+                  type="url"
+                  value={social.url}
+                  onChange={(e) => handleSocialChange(index, e)}
+                  onBlur={(e) => handleBlur(index, e.target.value)}
+                  placeholder={
+                    social.platform.toLowerCase() === "x"
+                      ? "x.com/username"
+                      : `${social.platform.toLowerCase()}.com/username`
+                  }
+                  className={`w-full bg-gray-700 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 transition-all ${
+                    errors[index]
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-600 focus:ring-cyan-500"
+                  }`}
+                />
+                {errors[index] && (
+                  <p className="mt-1 text-sm text-red-500">{errors[index]}</p>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
