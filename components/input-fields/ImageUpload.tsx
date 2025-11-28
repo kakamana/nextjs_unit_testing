@@ -1,5 +1,5 @@
 import type { FC, ChangeEvent, ChangeEventHandler, DragEventHandler } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Label from "./Label";
 
 interface ImageUploadProps {
@@ -9,6 +9,7 @@ interface ImageUploadProps {
 export const ImageUpload: FC<ImageUploadProps> = ({ handleChange }) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver: DragEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
@@ -64,10 +65,18 @@ export const ImageUpload: FC<ImageUploadProps> = ({ handleChange }) => {
         role="group"
         aria-labelledby="profileImage-label"
       >
-        <label
+        <div
           id="profileImage-label"
-          htmlFor="profileImage"
+          role="button"
+          tabIndex={0}
           className="flex flex-col items-center justify-center w-full h-full cursor-pointer"
+          onClick={() => fileInputRef.current?.click()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
             <p className="mb-2 text-sm text-gray-400">
@@ -75,25 +84,26 @@ export const ImageUpload: FC<ImageUploadProps> = ({ handleChange }) => {
             </p>
             <p className="text-xs text-gray-500">SVG, PNG, JPG, or GIF</p>
           </div>
-          <input
-            id="profileImage"
-            type="file"
-            className="hidden"
-            accept="image/*"
-            data-testid="file-upload"
-            aria-describedby="profileImageHelp"
-            onChange={(e) => {
-              // Clear any previous error when user selects a valid image
-              if (e.target.files && e.target.files.length === 1) {
-                const selected = e.target.files[0];
-                if (selected && selected.type.startsWith("image/")) {
-                  setError(null);
-                }
+        </div>
+        <input
+          ref={fileInputRef}
+          id="profileImage"
+          type="file"
+          className="hidden"
+          accept="image/*"
+          data-testid="file-upload"
+          aria-describedby="profileImageHelp"
+          onChange={(e) => {
+            // Clear any previous error when user selects a valid image
+            if (e.target.files && e.target.files.length === 1) {
+              const selected = e.target.files[0];
+              if (selected && selected.type.startsWith("image/")) {
+                setError(null);
               }
-              handleChange(e);
-            }}
-          />
-        </label>
+            }
+            handleChange(e);
+          }}
+        />
       </div>
       <p id="profileImageHelp" className="sr-only">
         Upload a profile image. Accepted formats: SVG, PNG, JPG, or GIF.
