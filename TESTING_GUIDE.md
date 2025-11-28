@@ -4,6 +4,7 @@
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
 - [QA Testing (Functional & Non-Functional)](#qa-testing)
+- [Accessibility Testing (WCAG)](#accessibility-testing)
 - [Security Testing (OWASP VAPT)](#security-testing)
 - [CI/CD Integration](#cicd-integration)
 - [Report Generation](#report-generation)
@@ -114,6 +115,41 @@ npm run qa:report
 - `artifacts/qa/qa-report.html`
 - `artifacts/qa/qa-report.pdf` ⭐ (For QA/ISR sign-off)
 - `coverage/lcov-report/index.html` (Detailed coverage)
+
+---
+
+## Accessibility Testing (WCAG)
+
+This section covers how to run accessibility tests to ensure the application is usable by people with disabilities, following the Web Content Accessibility Guidelines (WCAG).
+
+### Run Accessibility Tests
+```cmd
+npm run test:accessibility
+```
+
+**What it tests:**
+- ✅ Color contrast
+- ✅ ARIA attributes
+- ✅ Keyboard navigation
+- ✅ Form labels
+- ✅ Image alt text
+- ✅ And many other WCAG rules via `axe-core`.
+
+**Output:**
+- `artifacts/accessibility/accessibility-results.json`
+
+### Generate Accessibility Report
+```cmd
+# Step 1: Run accessibility tests
+npm run test:accessibility
+
+# Step 2: Generate accessibility report (HTML + PDF)
+npm run report:accessibility
+```
+
+**Output:**
+- `artifacts/accessibility/accessibility-report.html`
+- `artifacts/accessibility/accessibility-report.pdf` ⭐ (For accessibility compliance sign-off)
 
 ---
 

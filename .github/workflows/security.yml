@@ -46,6 +46,12 @@ jobs:
       - name: Generate QA test report (HTML/PDF)
         run: npm run qa:report
 
+      - name: Run accessibility tests
+        run: npm run test:accessibility
+
+      - name: Generate accessibility report (HTML/PDF)
+        run: npm run report:accessibility
+
       - name: Upload security artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -59,6 +65,12 @@ jobs:
           path: |
             artifacts/qa
             coverage
+
+      - name: Upload accessibility artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-artifacts
+          path: artifacts/accessibility
 
       - name: Fail on high alerts (example)
         run: |

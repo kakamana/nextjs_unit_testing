@@ -25,6 +25,7 @@ const config: Config = {
     "!**/jest.config.ts",
     "!**/jest.setup.ts",
     "!**/__test__/**",
+    "!**/accessibility-tests/**",
     "!**/coverage/**",
     "!**/public/**",
     "!**/next.config.ts",

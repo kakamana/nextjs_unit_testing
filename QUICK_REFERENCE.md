@@ -41,6 +41,19 @@ npm run security:report
 start artifacts\security\security-report.pdf
 ```
 
+## ♿ Accessibility Testing
+
+```cmd
+# Run accessibility tests
+npm run test:accessibility
+
+# Generate accessibility report
+npm run report:accessibility
+
+# View accessibility PDF report
+start artifacts\accessibility\accessibility-report.pdf
+```
+
 ## 🎯 Complete Workflow
 
 ```cmd
