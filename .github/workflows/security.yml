@@ -43,11 +43,22 @@ jobs:
       - name: Generate consolidated security report (HTML/PDF)
         run: npm run security:report
 
-      - name: Upload artifacts
+      - name: Generate QA test report (HTML/PDF)
+        run: npm run qa:report
+
+      - name: Upload security artifacts
         uses: actions/upload-artifact@v4
         with:
           name: security-artifacts
           path: artifacts/security
+
+      - name: Upload QA artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-artifacts
+          path: |
+            artifacts/qa
+            coverage
 
       - name: Fail on high alerts (example)
         run: |
