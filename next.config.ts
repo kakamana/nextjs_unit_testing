@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const securityHeaders = [
   {
     key: "Strict-Transport-Security",
@@ -15,18 +17,31 @@ const securityHeaders = [
   },
   {
     key: "Content-Security-Policy",
-    value:
-      [
-        "default-src 'self'",
-        "img-src 'self' data: blob:",
-        "style-src 'self' 'unsafe-inline'",
-        "font-src 'self' data:",
-        "script-src 'self'",
-        "connect-src 'self'",
-        "frame-ancestors 'none'",
-        "base-uri 'self'",
-        "form-action 'self'",
-      ].join("; "),
+    value: isDev
+      ? [
+          // Development CSP - allows Next.js hot reload and dev tools
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+          "style-src 'self' 'unsafe-inline'",
+          "img-src 'self' data: blob:",
+          "font-src 'self' data:",
+          "connect-src 'self' ws: wss:",
+          "frame-ancestors 'none'",
+          "base-uri 'self'",
+          "form-action 'self'",
+        ].join("; ")
+      : [
+          // Production CSP - strict security
+          "default-src 'self'",
+          "script-src 'self'",
+          "style-src 'self' 'unsafe-inline'",
+          "img-src 'self' data: blob:",
+          "font-src 'self' data:",
+          "connect-src 'self'",
+          "frame-ancestors 'none'",
+          "base-uri 'self'",
+          "form-action 'self'",
+        ].join("; "),
   },
 ];
 
