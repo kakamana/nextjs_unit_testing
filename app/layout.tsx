@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -22,12 +23,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = cookies();
+  const fullname = cookieStore.get("uaepass_fullname")?.value;
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <header className="w-full px-6 py-3 border-b border-gray-700 bg-gray-900 text-white flex items-center justify-between">
+          <h1 className="text-lg font-semibold">Next.js App</h1>
+          {fullname ? (
+            <div className="flex items-center gap-4 text-sm">
+              <span>Signed in: {fullname}</span>
+              <a href="https://localhost:8000/logout" className="text-cyan-400 hover:text-cyan-300">Sign out</a>
+            </div>
+          ) : (
+            <a href="https://localhost:8000/uaepass" className="text-sm text-cyan-400 hover:text-cyan-300">Login</a>
+          )}
+        </header>
+        <main>{children}</main>
       </body>
     </html>
   );
